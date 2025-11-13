@@ -3,3 +3,6 @@ tools:
         allow:
             - git *
             - mkdir *
+            - ls *
+            - find *
+            - wc *
