@@ -37,6 +37,6 @@ This is a basic integration scaffold. You'll need to implement the actual functi
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-[releases-shield]: https://img.shields.io/github/release/yourusername/sistena_onix.svg
-[releases]: https://github.com/yourusername/sistena_onix/releases
-[license-shield]: https://img.shields.io/github/license/yourusername/sistena_onix.svg
+[releases-shield]: https://img.shields.io/github/release/vmarkovtsev/sistena_onix.svg
+[releases]: https://github.com/vmarkovtsev/sistena_onix/releases
+[license-shield]: https://img.shields.io/github/license/vmarkovtsev/sistena_onix.svg
