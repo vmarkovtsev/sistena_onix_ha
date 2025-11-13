@@ -2,7 +2,7 @@
 
 import logging
 from datetime import datetime, timedelta
-from typing import Any, Dict, Optional
+from typing import Any
 
 import aiohttp
 
@@ -24,16 +24,16 @@ class SistenaOnixAuth:
         self._email = email
         self._password = password
         self._session = session
-        self._token: Optional[str] = None
-        self._refresh_token: Optional[str] = None
-        self._expires_at: Optional[datetime] = None
+        self._token: str | None = None
+        self._refresh_token: str | None = None
+        self._expires_at: datetime | None = None
 
     @property
-    def token(self) -> Optional[str]:
+    def token(self) -> str | None:
         """Return the current token."""
         return self._token
 
-    async def async_get_token(self) -> Optional[str]:
+    async def async_get_token(self) -> str | None:
         """Get a valid token."""
         if not self._token or self._expires_at <= datetime.now() + timedelta(minutes=5):
             await self.async_refresh_token()

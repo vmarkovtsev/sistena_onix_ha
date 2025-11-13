@@ -1,7 +1,7 @@
 """API client for Sistena Onix."""
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 import aiohttp
 
@@ -18,13 +18,13 @@ class SistenaOnixAPI:
         self._auth = auth
         self._session = session
 
-    async def async_get_devices(self) -> Optional[list]:
+    async def async_get_devices(self) -> list | None:
         """Get list of devices."""
         # TODO: Implement actual API call to get devices
         # This is a placeholder implementation
         return []
 
-    async def async_get_device_status(self, device_id: str) -> Optional[Dict[str, Any]]:
+    async def async_get_device_status(self, device_id: str) -> dict[str, Any] | None:
         """Get device status by ID."""
         # TODO: Implement actual API call to get device status
         # This is a placeholder implementation
@@ -36,7 +36,7 @@ class SistenaOnixAPI:
         # This is a placeholder implementation
         return True
 
-    async def async_make_request(self, method: str, url: str, **kwargs) -> Optional[Dict[str, Any]]:
+    async def async_make_request(self, method: str, url: str, **kwargs) -> dict[str, Any] | None:
         """Make an authenticated request to the API."""
         token = await self._auth.async_get_token()
         if not token:
