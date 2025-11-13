@@ -1,0 +1,11 @@
+{
+  "domain": "sistena_onix",
+  "name": "Sistena Onix",
+  "config_flow": true,
+  "documentation": "https://github.com/yourusername/sistena_onix",
+  "issue_tracker": "https://github.com/yourusername/sistena_onix/issues",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": [],
+  "iot_class": "cloud_polling"
+}
