@@ -9,6 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
+from .api import SistenaOnixAPI
 from .auth import SistenaOnixAuth
 from .const import DOMAIN
 
@@ -28,10 +29,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         session=session,
     )
     
-    # Store the session and auth in hass data
+    # Create API client instance
+    api = SistenaOnixAPI(auth, session)
+    
+    # Store the session, auth, and API client in hass data
     hass.data[DOMAIN] = {
         "session": session,
         "auth": auth,
+        "api": api,
     }
     
     # TODO: Implement the actual setup logic
