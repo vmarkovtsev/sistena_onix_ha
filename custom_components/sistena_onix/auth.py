@@ -62,9 +62,9 @@ class SistenaOnixAuth:
                     return False
 
                 result = await response.json()
-                self._token = result.get("idToken")
-                self._refresh_token = result.get("refreshToken")
-                expires_in = int(result.get("expiresIn", 0))
+                self._token = result["idToken"]
+                self._refresh_token = result["refreshToken"]
+                expires_in = int(result["expiresIn"])
                 self._expires_at = datetime.now() + timedelta(seconds=expires_in)
                 
                 return bool(self._token)
@@ -88,9 +88,9 @@ class SistenaOnixAuth:
                     return False
 
                 result = await response.json()
-                self._token = result.get("id_token")
-                self._refresh_token = result.get("refresh_token")
-                expires_in = int(result.get("expires_in", 0))
+                self._token = result["idToken"]
+                self._refresh_token = result["refreshToken"]
+                expires_in = int(result["expiresIn"])
                 self._expires_at = datetime.now() + timedelta(seconds=expires_in)
                 
                 return bool(self._token)

@@ -29,15 +29,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         session=session,
     )
     
-    # Create API client instance
     api = SistenaOnixAPI(auth, session)
     
-    # Store the session, auth, and API client in hass data
-    hass.data[DOMAIN] = {
-        "session": session,
-        "auth": auth,
-        "api": api,
-    }
+    hass.data[DOMAIN] = {"api": api}
     
     # TODO: Implement the actual setup logic
     return True
