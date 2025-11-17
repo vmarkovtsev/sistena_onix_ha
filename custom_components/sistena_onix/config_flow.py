@@ -6,11 +6,12 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.const import CONF_EMAIL, CONF_NAME, CONF_PASSWORD
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 
 from .auth import SistenaOnixAuth
-from .const import DOMAIN
+from .const import CONF_API_KEY, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,9 +34,9 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 step_id="user",
                 data_schema=vol.Schema(
                     {
-                        vol.Required("api_key"): str,
-                        vol.Required("email"): str,
-                        vol.Required("password"): str,
+                        vol.Required(CONF_API_KEY): str,
+                        vol.Required(CONF_EMAIL): str,
+                        vol.Required(CONF_PASSWORD): str,
                     }
                 ),
             )
