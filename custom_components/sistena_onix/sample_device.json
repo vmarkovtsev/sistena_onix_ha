@@ -1,0 +1,496 @@
+{
+  "device": {
+    "_id": "67a9e53e5461817056130c3c",
+    "MAC": "DC547554A8F8",
+    "status": "connected",
+    "update": "Versión del firmware no alcanzable, Error HTTP: 404",
+    "registers": {
+      "0": 150,
+      "1": 1,
+      "2": 769,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 0,
+      "9": 0,
+      "10": 21,
+      "11": 25,
+      "12": 22,
+      "13": 19,
+      "14": 5,
+      "15": 2610,
+      "16": 0,
+      "17": 0,
+      "18": 2565,
+      "19": 30,
+      "20": 5220,
+      "21": 0,
+      "22": 14085,
+      "23": 1,
+      "24": 0,
+      "25": 0,
+      "26": 242,
+      "27": 432,
+      "28": 1,
+      "29": 0,
+      "30": 22,
+      "31": 0,
+      "32": 0,
+      "33": 0,
+      "34": 0,
+      "35": 2
+    },
+    "associatedTo": "GC150_R02",
+    "fwName": "PasarelaModbus-C3-v01",
+    "version": "20220715",
+    "dBm": "-47",
+    "ipPublic": "...",
+    "lastboot": "829",
+    "email": "...",
+    "dateOfRegister": 1739700771482,
+    "device": "GC150_R02",
+    "wifiModule": "ESP32-C3",
+    "vendorClientInfo": {
+      "_id": "67b1bd56d9deb626b77e515d",
+      "clientId": "650c1d7489436509920aa56e",
+      "deviceId": "67a9e53e5461817056130c3c"
+    },
+    "model": {
+      "_id": "62e3a977cbece73c3ddb2188",
+      "model": "GC150_R02",
+      "registersDescription": [
+        {
+          "description": "ID dispositivo [sólo lectura].",
+          "moreInfo": "El regulador siempre responde 150 como punto de centinela en binario de 16 bits."
+        },
+        {
+          "description": "Dirección de comunicaciones [lectura/escritura].",
+          "moreInfo": "El valor que se envía es el valor de la dirección (1 a 240) en binario de 16 bits."
+        },
+        {
+          "description": "Configuración de la instalación [lectura/escritura].",
+          "bytes": {
+            "upperByte": "Byte alto: Configuración suelo radiante (0: No, 1: Suelo radiante en frío, 2: Suelo radiante en calor, 3: Suelo radiante en frío y calor).",
+            "lowerByte": "Byte bajo: Configuración fan-coil (0: No, 1: Fan-coil en frío, 2: Fan-coil en calor, 3: Fan-coil en frío y calor)."
+          }
+        },
+        {
+          "description": "Estado de funcionamiento on/off [lectura/escritura].",
+          "moreInfo": "0: Off, 1: On."
+        },
+        {
+          "description": "Selección frío/calor [lectura/escritura].",
+          "moreInfo": "0: Teclado, 1: Entrada digital, 2: Modbus."
+        },
+        {
+          "description": "Modo de funcionamiento frío/calor [lectura/escritura].",
+          "moreInfo": " 0: Frío, 1: Calor."
+        },
+        {
+          "description": "Contacto frío/calor [lectura/escritura].",
+          "moreInfo": "0: Abierto (frío), Cerrado (calor) / 1: Abierto (calor), Cerrado (frío)."
+        },
+        {
+          "description": "Selección normal/eco [lectura/escritura].",
+          "moreInfo": "0: Teclado, 1: Entrada digital 2: Modbus."
+        },
+        {
+          "description": "Funcionamiento normal/eco [lectura/escritura].",
+          "moreInfo": "0: Normal, 1: Eco."
+        },
+        {
+          "description": "Contacto normal/eco [lectura/escritura].",
+          "moreInfo": " 0: Abierto (normal), Cerrado (eco) / 1: Abierto (eco), Cerrado (normal)."
+        },
+        {
+          "description": "Consigna de temperatura modo frío normal [lectura/escritura].",
+          "moreInfo": "El valor que se envía es el valor de la consigna (10ºC a 40ºC) en binario de 16 bits."
+        },
+        {
+          "description": "Consigna de temperatura modo frío eco [lectura/escritura].",
+          "moreInfo": "El valor que se envía es el valor de la consigna (10ºC a 40ºC) en binario de 16 bits."
+        },
+        {
+          "description": "Consigna de temperatura modo calor normal [lectura/escritura].",
+          "moreInfo": "El valor que se envía es el valor de la consigna (10ºC a 40ºC) en binario de 16 bits."
+        },
+        {
+          "description": "Consigna de temperatura modo calor eco [lectura/escritura].",
+          "moreInfo": "El valor que se envía es el valor de la consigna (10ºC a 40ºC) en binario de 16 bits."
+        },
+        {
+          "description": "Histéresis etapa suelo radiante [lectura/escritura].",
+          "moreInfo": "El valor que se envía es el valor de la histéresis (0,5ºC a 1,0ºC) multiplicado por 10 en binario de 16 bits."
+        },
+        {
+          "description": "Histéresis etapa fan-coil [lectura/escritura].",
+          "bytes": {
+            "upperByte": "Byte alto: Histéresis etapa fan-coil modo frío.El valor que se envía es el valor de la histéresis (0,5ºC a 5,0ºC) multiplicado por 10 en binario de 8 bits.",
+            "lowerByte": "Byte bajo: Histéresis etapa fan-coil modo calor. El valor que se envía es el valor de la histéresis (0,5ºC a 7,0ºC) multiplicado por 10 en binario de 8 bits."
+          }
+        },
+        {
+          "description": "Funcionamiento auto/continuo ventilador fan-coil [lectura/escritura].",
+          "moreInfo": "0: Auto, 1: Continuo."
+        },
+        {
+          "description": "Velocidad ventilador fan-coil AC [lectura/escritura].",
+          "moreInfo": "0: Velocidad automática, 1: Velocidad baja, 2: Velocidad alta."
+        },
+        {
+          "description": "Regulación ventilador fan-coil AC [lectura/escritura].",
+          "bytes": {
+            "upperByte": "Byte alto: Diferencial entre velocidades. El valor que se envía es el valor del diferencial (1,0ºC a 3,0ºC) multiplicado por 10 en binario de 8 bits.",
+            "lowerByte": "Byte bajo: Histéresis velocidades. El valor que se envía es el valor de la histéresis (0,5ºC a 1,0ºC) multiplicado por 10 en binario de 8 bits."
+          }
+        },
+        {
+          "description": "Banda proporcional ventilador fan-coil EC [lectura/escritura].",
+          "moreInfo": "El valor que se envía es el valor de la banda proporcional (1,0ºC a 5,0ºC) multiplicado por 10 en binario de 16 bits."
+        },
+        {
+          "description": "Regulación ventilador fan-coil EC [lectura/escritura].",
+          "bytes": {
+            "upperByte": "Byte alto: Mínima velocidad. El valor que se envía es el valor de la mínima velocidad (0% a 50%) en binario de 16 bits.",
+            "lowerByte": "Byte bajo: Máxima velocidad. El valor que se envía es el valor de la máxima velocidad (55% a 100%) en binario de 16 bits."
+          }
+        },
+        {
+          "description": "Función deshumectación [lectura/escritura].",
+          "moreInfo": "0: No, 1: En modo frío, 2: En modo calor, 3: En modos frío y calor."
+        },
+        {
+          "description": "Valores función deshumectación [lectura/escritura].",
+          "bytes": {
+            "upperByte": "Byte alto: Consigna de humedad. El valor que se envía es el valor de la consigna (30% a 90%) en binario de 8 bits.",
+            "lowerByte": "Byte bajo: Histéresis. El valor que se envía es el valor de la histéresis (1% a 20%) en binario de 8 bits."
+          }
+        },
+        {
+          "description": "Actuación válvula suelo radiante con función deshumectación activa [lectura/escritura].",
+          "moreInfo": "0: Válvula habilitada, 1: Válvula deshabilitada."
+        },
+        {
+          "description": "Offset de temperatura [lectura/escritura].",
+          "moreInfo": "El valor que se envía es el valor del offset (-5,0ºC a +5,0ºC) multiplicado por 10 en binario de 16 bits."
+        },
+        {
+          "description": "Offset de humedad [lectura/escritura].",
+          "moreInfo": "El valor que se envía es el valor del offset (-20,0% a +20,0%) multiplicado por 10 en binario de 16 bits."
+        },
+        {
+          "description": "Temperatura [sólo lectura].",
+          "moreInfo": "El valor que se envía es el valor de la temperatura (0,0ºC a 50,0ºC) multiplicado por 10 en binario de 16 bits."
+        },
+        {
+          "description": "Humedad relativa [sólo lectura].",
+          "moreInfo": "El valor que se envía es el valor de la humedad (0,0% a 100,0%) multiplicado por 10 en binario de 16 bits."
+        },
+        {
+          "description": "Modo frío/calor actual [sólo lectura].",
+          "moreInfo": "0: Frío, 1: Calor."
+        },
+        {
+          "description": "Modo normal/eco actual [sólo lectura].",
+          "moreInfo": "0: Normal, 1: Eco."
+        },
+        {
+          "description": "Consigna de temperatura actual [sólo lectura].",
+          "moreInfo": "El valor que se envía es el valor de la consigna (10ºC a 40ºC) en binario de 16 bits."
+        },
+        {
+          "description": "Estado válvula suelo radiante [sólo lectura].",
+          "moreInfo": "0: Válvula off, 1: Válvula on."
+        },
+        {
+          "description": "Estado válvula fan-coil [sólo lectura].",
+          "moreInfo": "0: Válvula off, 1: Válvula on."
+        },
+        {
+          "description": "Estado ventilador fan-coil [sólo lectura].",
+          "bytes": {
+            "upperByte": "Byte alto: Ventilador fan-coil AC. 0: Ventilador off, 1: Ventilador on velocidad baja, 2: Ventilador on velocidad alta.",
+            "lowerByte": "Byte bajo: Ventilador fan-coil EC. El valor que se envía es el valor de la velocidad (0% a 100%) en binario de 8 bits."
+          }
+        },
+        {
+          "description": "Estado deshumectador [sólo lectura].",
+          "moreInfo": "0: Off, 1: On."
+        },
+        {
+          "description": "Versión firmware [sólo lectura].",
+          "moreInfo": "El valor que se envía es el valor de la versión del software (XX.X) multiplicado por 10 en binario de 8 bits."
+        }
+      ],
+      "util": {
+        "interact": [
+          {
+            "register": 3,
+            "components": [
+              {
+                "type": {
+                  "selector": "toggle",
+                  "info": {
+                    "description": "Estado de funcionamiento on/off",
+                    "optionA": {
+                      "value": 0,
+                      "descriptor": "Off",
+                      "dependsOn": []
+                    },
+                    "optionB": {
+                      "value": 1,
+                      "descriptor": "On",
+                      "dependsOn": []
+                    }
+                  }
+                },
+                "dependsOn": []
+              }
+            ]
+          },
+          {
+            "register": 5,
+            "components": [
+              {
+                "type": {
+                  "selector": "toggle",
+                  "info": {
+                    "description": "Modo de funcionamiento frío/calor",
+                    "optionA": {
+                      "value": 0,
+                      "descriptor": "Frío",
+                      "dependsOn": []
+                    },
+                    "optionB": {
+                      "value": 1,
+                      "descriptor": "Calor",
+                      "dependsOn": []
+                    }
+                  }
+                },
+                "dependsOn": []
+              }
+            ]
+          },
+          {
+            "register": 8,
+            "components": [
+              {
+                "type": {
+                  "selector": "toggle",
+                  "info": {
+                    "description": "Funcionamiento normal/eco",
+                    "optionA": {
+                      "value": 0,
+                      "descriptor": "Normal",
+                      "dependsOn": []
+                    },
+                    "optionB": {
+                      "value": 1,
+                      "descriptor": "Eco",
+                      "dependsOn": []
+                    }
+                  }
+                },
+                "dependsOn": []
+              }
+            ]
+          },
+          {
+            "register": 10,
+            "components": [
+              {
+                "dependsOn": [],
+                "type": {
+                  "selector": "range",
+                  "info": {
+                    "description": "Consigna temperatura frío normal",
+                    "range": {
+                      "min": 10,
+                      "max": 40,
+                      "metric": "ºC"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "register": 11,
+            "components": [
+              {
+                "dependsOn": [],
+                "type": {
+                  "selector": "range",
+                  "info": {
+                    "description": "Consigna temperatura frío eco",
+                    "range": {
+                      "min": 10,
+                      "max": 40,
+                      "metric": "ºC"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "register": 12,
+            "components": [
+              {
+                "dependsOn": [],
+                "type": {
+                  "selector": "range",
+                  "info": {
+                    "description": "Consigna temperatura calor normal",
+                    "range": {
+                      "min": 10,
+                      "max": 40,
+                      "metric": "ºC"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "register": 13,
+            "components": [
+              {
+                "dependsOn": [],
+                "type": {
+                  "selector": "range",
+                  "info": {
+                    "description": "Consigna temperatura calor eco",
+                    "range": {
+                      "min": 10,
+                      "max": 40,
+                      "metric": "ºC"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "visualize": [
+          {
+            "register": 26,
+            "components": [
+              {
+                "type": {
+                  "selector": "number",
+                  "info": {
+                    "description": "Temperatura",
+                    "metric": "ºC",
+                    "operation": {
+                      "type": "divide",
+                      "value": 10
+                    }
+                  }
+                },
+                "dependsOn": []
+              }
+            ]
+          },
+          {
+            "register": 27,
+            "components": [
+              {
+                "type": {
+                  "selector": "number",
+                  "info": {
+                    "description": "Humedad relativa",
+                    "metric": "%",
+                    "operation": {
+                      "type": "divide",
+                      "value": 10
+                    }
+                  }
+                },
+                "dependsOn": []
+              }
+            ]
+          },
+          {
+            "register": 31,
+            "components": [
+              {
+                "dependsOn": [],
+                "type": {
+                  "selector": "accumulator",
+                  "info": {
+                    "description": "Estado válvula suelo radiante",
+                    "selectors": [
+                      {
+                        "value": 1,
+                        "description": "Apertura válvula"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "register": 32,
+            "components": [
+              {
+                "dependsOn": [],
+                "type": {
+                  "selector": "accumulator",
+                  "info": {
+                    "description": "Estado válvula fan-coil",
+                    "selectors": [
+                      {
+                        "value": 1,
+                        "description": "Apertura válvula"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "register": 33,
+            "components": [
+              {
+                "type": {
+                  "selector": "number",
+                  "info": {
+                    "description": "Ventilador AC",
+                    "metric": "vel"
+                  },
+                  "operation": {
+                    "type": "divide",
+                    "value": 1
+                  }
+                },
+                "dependsOn": []
+              },
+              {
+                "type": {
+                  "selector": "number",
+                  "info": {
+                    "description": "Ventilador EC",
+                    "metric": "%"
+                  },
+                  "operation": {
+                    "type": "divide",
+                    "value": 1
+                  }
+                },
+                "dependsOn": []
+              }
+            ]
+          }
+        ]
+      },
+      "icon": "https://statics.sistena.io/icons2.svg",
+      "deviceDescription": "Regulador climatización suelo radiante y fan-coil"
+    }
+  }
+}
