@@ -8,6 +8,14 @@ from dataclasses import dataclass, field
 from datetime import datetime, UTC
 from typing import Any
 
+from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACMode, FAN_AUTO, FAN_HIGH, FAN_LOW, FAN_OFF, TEMP_CELSIUS
+from homeassistant.core import callback
+from homeassistant.helpers.entity import EntityDescription
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+from .api import SistenaOnixAPI
+from .const import DOMAIN
+
 
 @dataclass(slots=True)
 class RawRegulator:
@@ -103,14 +111,14 @@ class RawRegulator:
         # register 2 upper byte
         try:
             _parsed_properties["config_suelo_radiante"] = [
-                "no", "en frío", "en calor", "en frío y calor"
+                "no", "cooling", "heating", "cooling and heating"
             ][(registers[2] & 0xFF00) >> 8]
         except IndexError:
             _parsed_properties["config_suelo_radiante"] = "error"
         # register 2 lower byte
         try:
             _parsed_properties["config_fan-coil"] = [
-                "no", "en frío", "en calor", "en frío y calor"
+                "no", "cooling", "heating", "cooling and heating"
             ][registers[2] & 0x00FF]
         except IndexError:
             _parsed_properties["config_fan-coil"] = "error"
@@ -124,7 +132,7 @@ class RawRegulator:
         except IndexError:
             _parsed_properties["selection_of_operation"] = "error"
         # register 5
-        _parsed_properties["mode_operation"] = "calor" if registers[5] else "frío" 
+        _parsed_properties["mode_operation"] = "heat" if registers[5] else "cool" 
         # register 6
         try:
             _parsed_properties["contact_operation"] = [
@@ -165,11 +173,11 @@ class RawRegulator:
         # register 15 lower byte
         _parsed_properties["histeresis_stage_fan-coil_hot"] = registers[15] & 0x00FF / 10.0
         # register 16
-        _parsed_properties["mode_fan"] = "continuo" if registers[16] == 0 else "auto"
+        _parsed_properties["mode_fan"] = "continuous" if registers[16] == 0 else "auto"
         # register 17
         try:
             _parsed_properties["speed_fan_ac"] = [
-                "automática", "baja", "alta"
+                "auto", "low", "high"
             ][registers[17]]
         except IndexError:
             _parsed_properties["speed_fan_ac"] = "error"
@@ -186,7 +194,7 @@ class RawRegulator:
         # register 21
         try:
             _parsed_properties["mode_dryer"] = [
-                "no", "frío", "calor", "frío y calor"
+                "no", "cooling", "heating", "cooling and heating"
             ][registers[21]]
         except IndexError:
             _parsed_properties["mode_dryer"] = "error"
@@ -195,17 +203,17 @@ class RawRegulator:
         # register 22 lower byte
         _parsed_properties["histeresis_dryer"] = registers[22] & 0x00FF
         # register 23
-        _parsed_properties["valve_suelo_radiante"] = "deshabilitada" if registers[23] else "habilitada"
+        _parsed_properties["valve_suelo_radiante"] = "closed" if registers[23] else "open"
         # register 24
         _parsed_properties["offset_temperature"] = registers[24] / 10.0
         # register 25
-        _parsed_properties["offset_humedad"] = registers[25] / 10.0
+        _parsed_properties["offset_humidity"] = registers[25] / 10.0
         # register 26
         _parsed_properties["temperature"] = registers[26] / 10.0
         # register 27
         _parsed_properties["relative_humidity"] = registers[27] / 10.0
         # register 28
-        _parsed_properties["mode_cold_hot_actual"] = "calor" if registers[28] else "frío"
+        _parsed_properties["mode_cold_hot_actual"] = "heat" if registers[28] else "cool"
         # register 29
         _parsed_properties["mode_normal_eco_actual"] = "eco" if registers[29] else "normal"
         # register 30
@@ -227,4 +235,279 @@ class RawRegulator:
         _parsed_properties["state_dryer"] = bool(registers[34])
         # register 35
         _parsed_properties["version_firmware"] = "%d.%d" % divmod(registers[35], 10)
+
+    def get_args_for_temperature(self, temperature: float) -> tuple[int, int]:
+        """Generate POST body for setting temperature."""
+        # Determine the correct register based on current HVAC mode and preset mode
+        hvac_mode = self.parsed_properties["mode_cold_hot_actual"]
+        preset_mode = self.parsed_properties["mode_normal_eco_actual"]
+        
+        # Choose register based on heating/cooling and eco/normal states
+        if hvac_mode == "cool":
+            if preset_mode == "eco":
+                register = 11  # instruction_temperature_cold_eco
+            else:
+                register = 10  # instruction_temperature_cold_normal
+        else:  # heat mode
+            if preset_mode == "eco":
+                register = 13  # instruction_temperature_hot_eco
+            else:
+                register = 12  # instruction_temperature_hot_normal
+                
+        return register, int(temperature)
+    
+    def get_args_for_operation(self, mode: Literal["heat", "cool"]) -> tuple[int, int]:
+        """Generate POST body for setting temperature."""
+        # Assuming temperature is sent to register 30 (instruction_temperature_actual)
+        return 5, int(mode == "heat")
+    
+    def get_args_for_fan_speed(self, speed: Literal["auto", "low", "high"]) -> tuple[int, int]:
+        match speed:
+            case "auto":
+                register_value = 0
+            case "low":
+                register_value = 1
+            case "high":
+                register_value = 2
+            case _:
+                raise AsserionError(f"Bad speed: {speed}")
+        return 17, register_value
+    
+    def get_args_for_normal_eco(self, normal_eco: Literal["eco", "normal"]) -> tuple[int, int]:
+        return 8, int(normal_eco == "eco")
+
+    def get_args_for_on_off(self, state: bool) -> tuple[int, int]:
+        """Generate POST body for setting device on/off state."""
+        # Register 3 controls the device status
+        return 3, int(state)
+
+
+class Regulator(ClimateEntity):
+    """Climate entity for Sistena Onix regulator devices."""
+    
+    _attr_has_entity_name = True
+    
+    def __init__(self, raw_regulator: RawRegulator, api: SistenaOnixAPI) -> None:
+        """Initialize the regulator entity."""
+        self._raw_regulator = raw_regulator
+        self._api = api
+        
+    @property
+    def unique_id(self) -> str:
+        """Return the unique ID of the regulator."""
+        return self._raw_regulator.id
+        
+    @property
+    def name(self) -> str:
+        """Return the name of the regulator."""
+        return self._raw_regulator.device_description
+        
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Return the device info."""
+        return {
+            "identifiers": {(DOMAIN, self._raw_regulator.id)},
+            "name": self._raw_regulator.device_description,
+            "model": self._raw_regulator.device_model,
+            "sw_version": self._raw_regulator.parsed_properties["version_firmware"],
+            "hw_version": self._raw_regulator.version,
+            "manufacturer": "Giacomini",
+        }
+        
+    @property
+    def current_temperature(self) -> float:
+        """Return the current temperature."""
+        return self._raw_regulator.parsed_properties["temperature"]
+        
+    @property
+    def temperature_unit(self) -> str:
+        """Return the unit of measurement for temperature."""
+        return TEMP_CELSIUS
+        
+    @property
+    def target_temperature(self) -> float:
+        """Return the target temperature."""
+        return self._raw_regulator.parsed_properties["instruction_temperature_actual"]
+    
+    @property
+    def current_humidity(self) -> float:
+        """Return the current relative humidity."""
+        return self._raw_regulator.parsed_properties["relative_humidity"]
+
+    @property
+    def hvac_mode(self) -> HVACMode:
+        """Return the current HVAC mode."""
+        if not self._raw_regulator.status:
+            return HVACMode.OFF
+        match self._raw_regulator.parsed_properties["mode_cold_hot_actual"]:
+            case "heat":
+                return HVACMode.HEAT
+            case "cool":
+                return HVACMode.COOL
+        return HVACMode.OFF
+        
+    @property
+    def preset_mode(self) -> str:
+        """Return the current preset mode."""
+        return self._raw_regulator.parsed_properties["mode_normal_eco_actual"]
+        
+    @property
+    def preset_modes(self) -> list[str]:
+        """Return the list of available preset modes."""
+        return ["normal", "eco"]
+        
+    @property
+    def fan_mode(self) -> str:
+        """Return the current fan mode."""
+        match self._raw_regulator.parsed_properties["speed_fan_ac"]:
+            case "auto":
+                return FAN_AUTO
+            case "low":
+                return FAN_LOW
+            case "high":
+                return FAN_HIGH
+        return FAN_OFF
+        
+    @property
+    def fan_modes(self) -> list[str]:
+        """Return the list of available fan modes."""
+        return [FAN_OFF, FAN_LOW, FAN_HIGH, FAN_AUTO]
+        
+    @property
+    def min_temp(self) -> float:
+        """Return the minimum temperature."""
+        return 10
+        
+    @property
+    def max_temp(self) -> float:
+        """Return the maximum temperature."""
+        return 40
+        
+    async def set_temperature(self, temperature: float) -> None:
+        """Set new target temperature."""
+        # Get the register and value to set
+        register, value = self._raw_regulator.get_args_for_temperature(temperature)
+        
+        # Send command to device via API
+        await self._api.async_set_register_value(
+            self._raw_regulator.id, 
+            register, 
+            value
+        )
+        
+        # Update the corresponding register and parsed properties
+        self._raw_regulator.registers[register] = value
+        self._raw_regulator._parsed_properties["instruction_temperature_actual"] = value
+        
+    async def set_hvac_mode(self, hvac_mode: str) -> None:
+        """Set new HVAC mode."""
+        # Get the register and value to set
+        register, value = self._raw_regulator.get_args_for_operation(
+            "heat" if hvac_mode == HVACMode.HEAT else "cool"
+        )
+        
+        # Send command to device via API
+        await self._api.async_set_register_value(
+            self._raw_regulator.id, 
+            register, 
+            value
+        )
+        
+        # Update the corresponding register and parsed properties
+        self._raw_regulator.registers[register] = value
+        self._raw_regulator._parsed_properties["mode_cold_hot_actual"] = "heat" if value else "cool"
+        
+    async def set_fan_mode(self, fan_mode: str) -> None:
+        """Set new fan mode."""
+        match fan_mode:
+            case FAN_AUTO:
+                speed = "auto"
+            case FAN_LOW:
+                speed = "low"
+            case FAN_HIGH:
+                speed = "high"
+            case _:
+                return
+            
+        # Get the register and value to set
+        register, value = self._raw_regulator.get_args_for_fan_speed(speed)
+        
+        # Send command to device via API
+        await self._api.async_set_register_value(
+            self._raw_regulator.id, 
+            register, 
+            value
+        )
+        
+        # Update the corresponding register and parsed properties
+        self._raw_regulator.registers[register] = value
+        self._raw_regulator._parsed_properties["speed_fan_ac"] = speed
+        
+    async def set_preset_mode(self, preset_mode: str) -> None:
+        """Set new preset mode."""
+        # Get the register and value to set
+        register, value = self._raw_regulator.get_args_for_normal_eco(preset_mode)
+        
+        # Send command to device via API
+        await self._api.async_set_register_value(
+            self._raw_regulator.id, 
+            register, 
+            value
+        )
+        
+        # Update the corresponding register and parsed properties
+        self._raw_regulator.registers[register] = value
+        self._raw_regulator._parsed_properties["mode_normal_eco_actual"] = preset_mode
+
+    async def turn_on(self) -> None:
+        """Turn the device on."""
+        # Get the register and value to set
+        register, value = self._raw_regulator.get_args_for_on_off(True)
+        
+        # Send command to device via API
+        await self._api.async_set_register_value(
+            self._raw_regulator.id,
+            register,
+            value,
+        )
+        
+        # Update the corresponding register and parsed properties
+        self._raw_regulator.registers[register] = value
+        self._raw_regulator._parsed_properties["status"] = True
+
+    async def turn_off(self) -> None:
+        """Turn the device off."""
+        # Get the register and value to set
+        register, value = self._raw_regulator.get_args_for_on_off(False)
+        
+        # Send command to device via API
+        await self._api.async_set_register_value(
+            self._raw_regulator.id,
+            register,
+            value,
+        )
+        
+        # Update the corresponding register and parsed properties
+        self._raw_regulator.registers[register] = value
+        self._raw_regulator._parsed_properties["status"] = False
+
+    async def async_update(self) -> None:
+        """Update the regulator entity with latest data."""
+        # Get the latest device data from the API
+        device_data = await self._api.async_get_device(self._raw_regulator.id)
+        
+        # If we got valid data, update the raw regulator
+        if device_data is not None:
+            self._raw_regulator = RawRegulator.from_json(device_data)
+
+    @property
+    def supported_features(self) -> int:
+        """Return the list of supported features."""
+        return (
+            ClimateEntityFeature.TARGET_TEMPERATURE |
+            ClimateEntityFeature.FAN_MODE |
+            ClimateEntityFeature.PRESET_MODE |
+            ClimateEntityFeature.TURN_OFF |
+            ClimateEntityFeature.TURN_ON
+        )
     
