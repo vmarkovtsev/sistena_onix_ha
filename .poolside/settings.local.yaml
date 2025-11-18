@@ -8,3 +8,5 @@ tools:
             - wc *
             - python3 *
             - source *
+            - python *
+            - which *

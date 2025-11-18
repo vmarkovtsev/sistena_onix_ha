@@ -47,16 +47,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await coordinator.async_refresh()
     if not coordinator.last_update_success:
         raise ConfigEntryNotReady
-
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setups(entry, [Platform.CLIMATE])
-    )
     
     hass.data.setdefault(DOMAIN, {}).setdefault(entry.entry_id, {}).update(
         {
             DATA_API: api,
             DATA_COORDINATOR: coordinator,
         }
+    )
+
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setups(entry, [Platform.CLIMATE])
     )
     
     return True
