@@ -15,7 +15,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from .api import SistenaOnixAPI
 from .auth import SistenaOnixAuth
 from .const import CONF_API_KEY, DATA_NAME, DATA_COORDINATOR, DATA_API, DOMAIN
-from .device import Regulator, RawRegulator
+from .climate import Regulator, RawRegulator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         raise ConfigEntryNotReady
 
     hass.async_create_task(
-        hass.config_entries.async_forward_entry_setups(entry, Platform.CLIMATE)
+        hass.config_entries.async_forward_entry_setups(entry, [Platform.CLIMATE])
     )
     
     hass.data.setdefault(DOMAIN, {}).setdefault(entry.entry_id, {}).update(
