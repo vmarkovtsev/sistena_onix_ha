@@ -181,7 +181,7 @@ class RawRegulator:
         # register 15 upper byte
         _parsed_properties["histeresis_stage_fan-coil_cold"] = ((registers[15] & 0xFF00) >> 8) / 10.0
         # register 15 lower byte
-        _parsed_properties["histeresis_stage_fan-coil_hot"] = registers[15] & 0x00FF / 10.0
+        _parsed_properties["histeresis_stage_fan-coil_hot"] = (registers[15] & 0x00FF) / 10.0
         # register 16
         _parsed_properties["mode_fan"] = "continuous" if registers[16] == 0 else "auto"
         # register 17
@@ -192,9 +192,9 @@ class RawRegulator:
         except IndexError:
             _parsed_properties["speed_fan_ac"] = "error"
         # register 18 upper byte
-        _parsed_properties["difference_speeds"] = (registers[18] & 0xFF00) >> 8 / 10.0
+        _parsed_properties["difference_speeds"] = ((registers[18] & 0xFF00) >> 8) / 10.0
         # register 18 lower byte
-        _parsed_properties["histeresis_speeds"] = registers[18] & 0x00FF / 10.0
+        _parsed_properties["histeresis_speeds"] = (registers[18] & 0x00FF) / 10.0
         # register 19
         _parsed_properties["proportional_band_fan_ec"] = registers[19] / 10.0
         # register 20 upper byte
