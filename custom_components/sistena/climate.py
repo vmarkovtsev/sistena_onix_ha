@@ -297,10 +297,16 @@ class Regulator(ClimateEntity):
     
     _attr_has_entity_name = True
     
-    def __init__(self, raw_regulator: RawRegulator, api: SistenaOnixAPI) -> None:
+    def __init__(
+        self,
+        raw_regulator: RawRegulator,
+        api: SistenaOnixAPI,
+        name: str | None,
+    ) -> None:
         """Initialize the regulator entity."""
         self._raw_regulator = raw_regulator
         self._api = api
+        self._name = name or self._raw_regulator.device_description
         
     @property
     def unique_id(self) -> str:
@@ -310,7 +316,7 @@ class Regulator(ClimateEntity):
     @property
     def name(self) -> str:
         """Return the name of the regulator."""
-        return self._raw_regulator.device_description
+        return self._name
         
     @property
     def device_info(self) -> dict[str, Any]:
@@ -544,7 +550,7 @@ async def async_setup_entry(
             # If we got valid data, create the RawRegulator instance
             if device_data is not None:
                 raw_regulator = RawRegulator.from_json(device_data)
-                regulator = Regulator(raw_regulator, api)
+                regulator = Regulator(raw_regulator, api, device_entry.get("givenName"))
                 entities.append(regulator)
         except Exception as e:
             _LOGGER.exception(
