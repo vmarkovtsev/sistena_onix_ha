@@ -323,7 +323,7 @@ class Regulator(ClimateEntity):
         """Return the device info."""
         return {
             "identifiers": {(DOMAIN, self._raw_regulator.id)},
-            "name": self._raw_regulator.device_description,
+            "name": self._name,
             "model": self._raw_regulator.device_model,
             "sw_version": self._raw_regulator.parsed_properties["version_firmware"],
             "hw_version": self._raw_regulator.version,
