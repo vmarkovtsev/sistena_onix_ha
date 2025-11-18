@@ -357,6 +357,11 @@ class Regulator(ClimateEntity):
         return HVACMode.OFF
         
     @property
+    def hvac_modes(self) -> list[HVACMode]:
+        """Return the list of available HVAC modes."""
+        return [HVACMode.OFF, HVACMode.HEAT, HVACMode.COOL]
+        
+    @property
     def preset_mode(self) -> str:
         """Return the current preset mode."""
         return self._raw_regulator.parsed_properties["mode_normal_eco_actual"]
