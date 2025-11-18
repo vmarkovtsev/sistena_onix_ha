@@ -14,7 +14,7 @@ class SistenaOnixAPI:
     """Handle API calls to Sistena Onix."""
     
     # API base URL
-    BASE_URL = "https://api.sistena.io/api/v2/"
+    BASE_URL = "https://api.sistena.io/api/v2"
 
     def __init__(self, auth: SistenaOnixAuth, session: aiohttp.ClientSession) -> None:
         """Initialize Sistena Onix API."""
@@ -55,7 +55,12 @@ class SistenaOnixAPI:
         try:
             async with self._session.request(method, url, headers=headers, **kwargs) as response:
                 if response.status != 200:
-                    _LOGGER.error("API request failed: %s: %s", url, response.status)
+                    _LOGGER.error(
+                        "API request failed: %s: %s\n%s",
+                        url,
+                        response.status,
+                        "\n".join(f"{k}: {v}" for k, v in headers.items()),
+                    )
                     return None
 
                 return await response.json()
