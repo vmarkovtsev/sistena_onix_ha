@@ -537,10 +537,9 @@ async def async_setup_entry(
                 regulator = Regulator(raw_regulator, api)
                 entities.append(regulator)
         except Exception as e:
-            _LOGGER.warning(
-                "Failed to create Regulator: %s: %s",
-                type(e).__name__,
-                e,
+            _LOGGER.exception(
+                "Failed to create Regulator %s",
+                device_entry.get("deviceId"),
             )
             continue
 
