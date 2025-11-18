@@ -85,7 +85,12 @@ class RawRegulator:
         icon = model_data["icon"]
         
         # Extract registers
-        registers = device_data["registers"]
+        registers_dict = device_data["registers"]
+        registers = [-1] * len(registers_dict)
+        for k, v in registers_dict.items():
+            registers[int(k)] = v
+        if -1 in registers:
+            raise ValueError(f"Registers format mismatch: {registers_dict.keys()}")
         
         # Create and return instance
         return cls(
