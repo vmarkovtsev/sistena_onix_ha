@@ -9,8 +9,9 @@ from dataclasses import dataclass, field
 from datetime import datetime, UTC
 from typing import Any
 
-from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACMode, FAN_AUTO, FAN_HIGH, FAN_LOW, FAN_OFF, TEMP_CELSIUS
+from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACMode, FAN_AUTO, FAN_HIGH, FAN_LOW, FAN_OFF
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -326,7 +327,7 @@ class Regulator(ClimateEntity):
     @property
     def temperature_unit(self) -> str:
         """Return the unit of measurement for temperature."""
-        return TEMP_CELSIUS
+        return UnitOfTemperature.CELSIUS
         
     @property
     def target_temperature(self) -> float:
