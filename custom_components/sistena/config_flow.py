@@ -43,7 +43,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 step_id="user",
                 data_schema=data_schema,
             )
-    
+
         # Check authentication
         auth = SistenaOnixAuth(**user_input, session=aiohttp.ClientSession())
         if not await auth.async_refresh_token():
@@ -54,3 +54,27 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         return self.async_create_entry(title="Sistena Onix", data=user_input)
+
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle a option flow for Sistena Onix."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(title="Sistena Onix", data=user_input)
+
+        # Get current options
+        # options = self.config_entry.options
+
+        # Define the options schema
+        options_schema = vol.Schema({})
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=options_schema,
+        )

@@ -55,7 +55,7 @@ class SistenaOnixAPI:
         try:
             async with self._session.request(method, url, headers=headers, **kwargs) as response:
                 if response.status != 200:
-                    _LOGGER.error("API request failed: %s", response.status)
+                    _LOGGER.error("API request failed: %s: %s", url, response.status)
                     return None
 
                 return await response.json()
