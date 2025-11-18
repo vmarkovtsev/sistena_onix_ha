@@ -52,7 +52,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.config_entries.async_forward_entry_setups(entry, Platform.CLIMATE)
     )
     
-    hass.data[DOMAIN].setdefault(entry.entry_id, {}).update(
+    hass.data.setdefault(DOMAIN, {}).setdefault(entry.entry_id, {}).update(
         {
             DATA_API: api,
             DATA_COORDINATOR: coordinator,
