@@ -6,7 +6,7 @@ from datetime import timedelta
 
 import aiohttp
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_EMAIL, CONF_NAME, CONF_PASSWORD, Platform
+from homeassistant.const import CONF_EMAIL, CONF_PASSWORD, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -23,7 +23,6 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Sistena Onix from a config entry."""
     config = entry.data
-    name = config[CONF_NAME]
 
     # Create an aiohttp session for the integration
     session = aiohttp.ClientSession()
@@ -41,9 +40,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
-        name=f"Sistena Onix {name}",
+        name=f"Sistena Onix",
         update_method=api.async_get_devices,
-        update_interval=timedelta(seconds=30),
+        update_interval=timedelta(seconds=60),
     )
     await coordinator.async_refresh()
     if not coordinator.last_update_success:
