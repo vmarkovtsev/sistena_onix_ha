@@ -14,7 +14,7 @@ class SistenaOnixAPI:
     """Handle API calls to Sistena Onix."""
     
     # API base URL
-    BASE_URL = "https://api.sistena.io/api/v2/
+    BASE_URL = "https://api.sistena.io/api/v2/"
 
     def __init__(self, auth: SistenaOnixAuth, session: aiohttp.ClientSession) -> None:
         """Initialize Sistena Onix API."""

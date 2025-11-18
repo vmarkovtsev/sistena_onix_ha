@@ -6,3 +6,4 @@ tools:
             - ls *
             - find *
             - wc *
+            - python3 *
