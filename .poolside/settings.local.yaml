@@ -7,3 +7,4 @@ tools:
             - find *
             - wc *
             - python3 *
+            - source *

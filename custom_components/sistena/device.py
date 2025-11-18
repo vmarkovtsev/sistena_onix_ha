@@ -7,7 +7,7 @@ This module defines the Device class for interacting with Sistena Onix devices.
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime, UTC
-from typing import Any
+from typing import Any, Literal
 
 from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACMode, FAN_AUTO, FAN_HIGH, FAN_LOW, FAN_OFF
 from homeassistant.config_entries import ConfigEntry
