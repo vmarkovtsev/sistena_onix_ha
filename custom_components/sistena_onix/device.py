@@ -4,17 +4,21 @@ Sistena Onix Device Class.
 This module defines the Device class for interacting with Sistena Onix devices.
 """
 
+import logging
 from dataclasses import dataclass, field
 from datetime import datetime, UTC
 from typing import Any
 
 from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACMode, FAN_AUTO, FAN_HIGH, FAN_LOW, FAN_OFF, TEMP_CELSIUS
-from homeassistant.core import callback
-from homeassistant.helpers.entity import EntityDescription
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api import SistenaOnixAPI
-from .const import DOMAIN
+from .const import DATA_API, DATA_COORDINATOR, DOMAIN
+
+_LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
@@ -270,7 +274,7 @@ class RawRegulator:
             case "high":
                 register_value = 2
             case _:
-                raise AsserionError(f"Bad speed: {speed}")
+                raise AssertionError(f"Bad speed: {speed}")
         return 17, register_value
     
     def get_args_for_normal_eco(self, normal_eco: Literal["eco", "normal"]) -> tuple[int, int]:
@@ -419,15 +423,14 @@ class Regulator(ClimateEntity):
         
     async def set_fan_mode(self, fan_mode: str) -> None:
         """Set new fan mode."""
-        match fan_mode:
-            case FAN_AUTO:
-                speed = "auto"
-            case FAN_LOW:
-                speed = "low"
-            case FAN_HIGH:
-                speed = "high"
-            case _:
-                return
+        if fan_mode == FAN_AUTO:
+            speed = "auto"
+        elif fan_mode == FAN_LOW:
+            speed = "low"
+        elif fan_mode == FAN_HIGH:
+            speed = "high"
+        else:
+            return
             
         # Get the register and value to set
         register, value = self._raw_regulator.get_args_for_fan_speed(speed)
@@ -510,4 +513,34 @@ class Regulator(ClimateEntity):
             ClimateEntityFeature.TURN_OFF |
             ClimateEntityFeature.TURN_ON
         )
-    
+
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    data = hass.data[DOMAIN][config_entry.entry_id]
+    coordinator = data[DATA_COORDINATOR]
+    api: SistenaOnixAPI = data[DATA_API]
+
+    entities = []
+    for device_entry in coordinator.data:
+        try:
+            # Fetch detailed device data using the API
+            device_data = await api.async_get_device(device_entry["deviceId"])
+
+            # If we got valid data, create the RawRegulator instance
+            if device_data is not None:
+                raw_regulator = RawRegulator.from_json(device_data)
+                regulator = Regulator(raw_regulator, api)
+                entities.append(regulator)
+        except Exception as e:
+            _LOGGER.warning(
+                "Failed to create Regulator: %s: %s",
+                type(e).__name__,
+                e,
+            )
+            continue
+
+    async_add_entities(entities)
