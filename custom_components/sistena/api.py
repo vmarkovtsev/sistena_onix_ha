@@ -48,7 +48,7 @@ class SistenaOnixAPI:
 
         headers = {
             "Content-Type": "application/json",
-            "from": "HomeAssistant",
+            "from": "sistenaApp",
             "token": token,
         }
 
