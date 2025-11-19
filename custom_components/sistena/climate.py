@@ -577,7 +577,6 @@ class SistenaSensor(SensorEntity):
         """Return the device info."""
         info = self._regulator.device_info.copy()
         info["name"] = self.name
-        info["identifiers"] = {(DOMAIN, f"{self._regulator.unique_id}.{self.name}")}
         return info
 
 
