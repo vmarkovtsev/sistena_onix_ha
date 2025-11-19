@@ -404,7 +404,7 @@ class Regulator(ClimateEntity):
         """Return the maximum temperature."""
         return 40
         
-    async def set_temperature(self, temperature: float, **_) -> None:
+    async def async_set_temperature(self, temperature: float, **_) -> None:
         """Set new target temperature."""
         # Get the register and value to set
         register, value = self._raw_regulator.get_args_for_temperature(temperature)
@@ -420,7 +420,7 @@ class Regulator(ClimateEntity):
         self._raw_regulator.registers[register] = value
         self._raw_regulator._parsed_properties["instruction_temperature_actual"] = value
         
-    async def set_hvac_mode(self, hvac_mode: str, **_) -> None:
+    async def async_set_hvac_mode(self, hvac_mode: str, **_) -> None:
         """Set new HVAC mode."""
         # Get the register and value to set
         register, value = self._raw_regulator.get_args_for_operation(
@@ -438,7 +438,7 @@ class Regulator(ClimateEntity):
         self._raw_regulator.registers[register] = value
         self._raw_regulator._parsed_properties["mode_cold_hot_actual"] = "heat" if value else "cool"
         
-    async def set_fan_mode(self, fan_mode: str, **_) -> None:
+    async def async_set_fan_mode(self, fan_mode: str, **_) -> None:
         """Set new fan mode."""
         if fan_mode == FAN_AUTO:
             speed = "auto"
@@ -463,7 +463,7 @@ class Regulator(ClimateEntity):
         self._raw_regulator.registers[register] = value
         self._raw_regulator._parsed_properties["speed_fan_ac"] = speed
         
-    async def set_preset_mode(self, preset_mode: str, **_) -> None:
+    async def async_set_preset_mode(self, preset_mode: str, **_) -> None:
         """Set new preset mode."""
         # Get the register and value to set
         register, value = self._raw_regulator.get_args_for_normal_eco(preset_mode)
@@ -479,7 +479,7 @@ class Regulator(ClimateEntity):
         self._raw_regulator.registers[register] = value
         self._raw_regulator._parsed_properties["mode_normal_eco_actual"] = preset_mode
 
-    async def turn_on(self) -> None:
+    async def async_turn_on(self) -> None:
         """Turn the device on."""
         # Get the register and value to set
         register, value = self._raw_regulator.get_args_for_on_off(True)
@@ -495,7 +495,7 @@ class Regulator(ClimateEntity):
         self._raw_regulator.registers[register] = value
         self._raw_regulator._parsed_properties["status"] = True
 
-    async def turn_off(self) -> None:
+    async def async_turn_off(self) -> None:
         """Turn the device off."""
         # Get the register and value to set
         register, value = self._raw_regulator.get_args_for_on_off(False)
