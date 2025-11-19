@@ -556,13 +556,14 @@ class SistenaSensor(SensorEntity):
         device_class: SensorDeviceClass,
         state_class: SensorStateClass,
         unit: str,
+        hass: HomeAssistant,
     ) -> None:
         """Initialize the sensor."""
         self._regulator = regulator
         self._attr_device_class = device_class
         self._attr_state_class = state_class
         self._attr_native_unit_of_measurement = unit
-        self.entity_id = generate_entity_id("sensor.sistena_{}", self.name)
+        self.entity_id = generate_entity_id("sensor.sistena_{}", self.name, hass=hass)
 
     @property
     def unique_id(self) -> str:
@@ -585,13 +586,14 @@ class SistenaSensor(SensorEntity):
 class TemperatureSensor(SistenaSensor):
     """Temperature sensor for Sistena Onix devices."""
 
-    def __init__(self, regulator: Regulator) -> None:
+    def __init__(self, regulator: Regulator, hass: HomeAssistant) -> None:
         """Initialize the temperature sensor."""
         super().__init__(
             regulator,
             SensorDeviceClass.TEMPERATURE,
             SensorStateClass.MEASUREMENT,
             UnitOfTemperature.CELSIUS,
+            hass,
         )
 
     @property
@@ -602,13 +604,14 @@ class TemperatureSensor(SistenaSensor):
 class HumiditySensor(SistenaSensor):
     """Humidity sensor for Sistena Onix devices."""
 
-    def __init__(self, regulator: Regulator) -> None:
+    def __init__(self, regulator: Regulator, hass: HomeAssistant) -> None:
         """Initialize the humidity sensor."""
         super().__init__(
             regulator,
             SensorDeviceClass.HUMIDITY,
             SensorStateClass.MEASUREMENT,
             "%",
+            hass,
         )
 
     @property
@@ -637,7 +640,7 @@ async def async_setup_entry(
                 regulator = Regulator(raw_regulator, api, device_entry.get("givenName"))
                 # Add sensor entities for convenience
                 entities.extend(
-                    [regulator, TemperatureSensor(regulator), HumiditySensor(regulator)]
+                    [regulator, TemperatureSensor(regulator, hass), HumiditySensor(regulator, hass)]
                 )
         except Exception as e:
             _LOGGER.exception(
