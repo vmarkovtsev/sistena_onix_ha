@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class SistenaOnixAPI:
     """Handle API calls to Sistena Onix."""
-    
+
     # API base URL
     BASE_URL = "https://api.sistena.io/api/v2"
 
@@ -26,7 +26,7 @@ class SistenaOnixAPI:
         result = await self.async_make_request("GET", f"{self.BASE_URL}/devices")
         if result is None:
             return []
-            
+
         # Return the devices array from the response
         return result.get("devices", [])
 
@@ -72,6 +72,6 @@ class SistenaOnixAPI:
         """Set register value for a device."""
         url = f"{self.BASE_URL}/devices/{device_id}/registers"
         data = {"register": register, "value": value}
-        
+
         result = await self.async_make_request("POST", url, json=data)
         return result is not None

@@ -1,4 +1,5 @@
 """Config flow for Sistena Onix integration."""
+
 from __future__ import annotations
 
 import logging

@@ -1,4 +1,5 @@
 """Sistena Onix integration."""
+
 from __future__ import annotations
 
 import logging
@@ -26,7 +27,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     # Create an aiohttp session for the integration
     session = aiohttp.ClientSession()
-    
+
     # Create authentication instance
     auth = SistenaOnixAuth(
         api_key=config[CONF_API_KEY],
@@ -34,9 +35,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         password=config[CONF_PASSWORD],
         session=session,
     )
-    
+
     api = SistenaOnixAPI(auth, session)
-    
+
     coordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
@@ -47,7 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await coordinator.async_refresh()
     if not coordinator.last_update_success:
         raise ConfigEntryNotReady
-    
+
     hass.data.setdefault(DOMAIN, {}).setdefault(entry.entry_id, {}).update(
         {
             DATA_API: api,
@@ -56,7 +57,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     await hass.config_entries.async_forward_entry_setups(entry, [Platform.CLIMATE])
-    
+
     return True
 
 
@@ -68,6 +69,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         if session:
             await session.close()
         hass.data.pop(DOMAIN, None)
-    
+
     # Unload the climate platform
     return await hass.config_entries.async_unload_platforms(entry, Platform.CLIMATE)

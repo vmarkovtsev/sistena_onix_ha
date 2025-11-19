@@ -48,7 +48,7 @@ class SistenaOnixAuth:
     async def _async_signin(self) -> bool:
         """Sign in to get initial token."""
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={self._api_key}"
-        
+
         data = {
             "returnSecureToken": True,
             "email": self._email,
@@ -66,7 +66,7 @@ class SistenaOnixAuth:
                 self._refresh_token = result["refreshToken"]
                 expires_in = int(result["expiresIn"])
                 self._expires_at = datetime.now() + timedelta(seconds=expires_in)
-                
+
                 return bool(self._token)
         except Exception as ex:
             _LOGGER.error("Failed to sign in: %s", ex)
@@ -75,7 +75,7 @@ class SistenaOnixAuth:
     async def _async_refresh_token(self) -> bool:
         """Refresh the token using refresh token."""
         url = f"https://securetoken.googleapis.com/v1/token?key={self._api_key}"
-        
+
         data = {
             "grant_type": "refresh_token",
             "refresh_token": self._refresh_token,
@@ -93,7 +93,7 @@ class SistenaOnixAuth:
                 self._refresh_token = result["refresh_token"]
                 expires_in = int(result["expires_in"])
                 self._expires_at = datetime.now() + timedelta(seconds=expires_in)
-                
+
                 return bool(self._token)
         except Exception as ex:
             _LOGGER.error("Failed to refresh token: %s: %s", ex, result)
