@@ -80,6 +80,7 @@ class SistenaOnixAuth:
             "grant_type": "refresh_token",
             "refresh_token": self._refresh_token,
         }
+        result = "N/A"
 
         try:
             async with self._session.post(url, json=data) as response:
@@ -88,12 +89,12 @@ class SistenaOnixAuth:
                     return False
 
                 result = await response.json()
-                self._token = result["idToken"]
-                self._refresh_token = result["refreshToken"]
-                expires_in = int(result["expiresIn"])
+                self._token = result["id_token"]
+                self._refresh_token = result["refresh_token"]
+                expires_in = int(result["expires_in"])
                 self._expires_at = datetime.now() + timedelta(seconds=expires_in)
                 
                 return bool(self._token)
         except Exception as ex:
-            _LOGGER.error("Failed to refresh token: %s", ex)
+            _LOGGER.error("Failed to refresh token: %s: %s", ex, result)
             return False
