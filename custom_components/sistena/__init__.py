@@ -15,7 +15,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import SistenaOnixAPI
 from .auth import SistenaOnixAuth
-from .const import CONF_API_KEY, DATA_NAME, DATA_COORDINATOR, DATA_API, DOMAIN
+from .const import CONF_API_KEY, DATA_DEVICES, DATA_COORDINATOR, DATA_API, DOMAIN
 from .climate import Regulator, RawRegulator
 
 _LOGGER = logging.getLogger(__name__)
@@ -53,10 +53,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         {
             DATA_API: api,
             DATA_COORDINATOR: coordinator,
+            DATA_DEVICES: [],
         }
     )
 
     await hass.config_entries.async_forward_entry_setups(entry, [Platform.CLIMATE])
+    await hass.config_entries.async_forward_entry_setups(entry, [Platform.SENSOR])
 
     return True
 
@@ -71,4 +73,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data.pop(DOMAIN, None)
 
     # Unload the climate platform
-    return await hass.config_entries.async_unload_platforms(entry, Platform.CLIMATE)
+    return await hass.config_entries.async_unload_platforms(
+        entry, [Platform.CLIMATE, Platform.SENSOR]
+    )

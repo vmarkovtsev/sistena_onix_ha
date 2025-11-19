@@ -18,20 +18,15 @@ from homeassistant.components.climate import (
     FAN_LOW,
     FAN_OFF,
 )
-from homeassistant.components.sensor import (
-    SensorEntity,
-    SensorDeviceClass,
-    SensorStateClass,
-)
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import UnitOfTemperature
+from homeassistant.const import Platform, UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import generate_entity_id
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api import SistenaOnixAPI
-from .const import DATA_API, DATA_COORDINATOR, DOMAIN
+from .const import DATA_API, DATA_DEVICES, DATA_COORDINATOR, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -545,80 +540,6 @@ class Regulator(ClimateEntity):
         )
 
 
-class SistenaSensor(SensorEntity):
-    """Base sensor class for Sistena Onix sensors."""
-
-    _attr_has_entity_name = True
-
-    def __init__(
-        self,
-        regulator: Regulator,
-        device_class: SensorDeviceClass,
-        state_class: SensorStateClass,
-        unit: str,
-        hass: HomeAssistant,
-    ) -> None:
-        """Initialize the sensor."""
-        self._regulator = regulator
-        self._attr_device_class = device_class
-        self._attr_state_class = state_class
-        self._attr_native_unit_of_measurement = unit
-        self.entity_id = generate_entity_id("sensor.sistena_{}", self.name, hass=hass)
-
-    @property
-    def unique_id(self) -> str:
-        """Return the unique ID of the sensor."""
-        return f"{self._regulator.unique_id}_{self.name.lower()}"
-
-    @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
-        return type(self).__name__.removesuffix("Sensor")
-
-    @property
-    def device_info(self) -> dict[str, Any]:
-        """Return the device info."""
-        info = self._regulator.device_info.copy()
-        info["name"] = self.name
-        return info
-
-
-class TemperatureSensor(SistenaSensor):
-    """Temperature sensor for Sistena Onix devices."""
-
-    def __init__(self, regulator: Regulator, hass: HomeAssistant) -> None:
-        """Initialize the temperature sensor."""
-        super().__init__(
-            regulator,
-            SensorDeviceClass.TEMPERATURE,
-            SensorStateClass.MEASUREMENT,
-            UnitOfTemperature.CELSIUS,
-            hass,
-        )
-
-    @property
-    def native_value(self) -> float:
-        return self._regulator.current_temperature
-
-
-class HumiditySensor(SistenaSensor):
-    """Humidity sensor for Sistena Onix devices."""
-
-    def __init__(self, regulator: Regulator, hass: HomeAssistant) -> None:
-        """Initialize the humidity sensor."""
-        super().__init__(
-            regulator,
-            SensorDeviceClass.HUMIDITY,
-            SensorStateClass.MEASUREMENT,
-            "%",
-            hass,
-        )
-
-    @property
-    def native_value(self) -> float:
-        return self._regulator.current_humidity
-
-
 async def async_setup_entry(
     hass: HomeAssistant,
     config_entry: ConfigEntry,
@@ -639,9 +560,7 @@ async def async_setup_entry(
                 raw_regulator = RawRegulator.from_json(device_data)
                 regulator = Regulator(raw_regulator, api, device_entry.get("givenName"))
                 # Add sensor entities for convenience
-                entities.extend(
-                    [regulator, TemperatureSensor(regulator, hass), HumiditySensor(regulator, hass)]
-                )
+                entities.append(regulator)
         except Exception as e:
             _LOGGER.exception(
                 "Failed to create Regulator %s",
@@ -650,3 +569,4 @@ async def async_setup_entry(
             continue
 
     async_add_entities(entities)
+    data[DATA_DEVICES].extend(entities)
