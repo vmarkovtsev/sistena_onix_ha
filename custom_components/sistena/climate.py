@@ -9,7 +9,20 @@ from dataclasses import dataclass, field
 from datetime import datetime, UTC
 from typing import Any, Literal
 
-from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACMode, FAN_AUTO, FAN_HIGH, FAN_LOW, FAN_OFF
+from homeassistant.components.climate import (
+    ClimateEntity,
+    ClimateEntityFeature,
+    HVACMode,
+    FAN_AUTO,
+    FAN_HIGH,
+    FAN_LOW,
+    FAN_OFF,
+)
+from homeassistant.components.sensor import (
+    SensorEntity,
+    SensorDeviceClass,
+    SensorStateClass,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
@@ -523,12 +536,83 @@ class Regulator(ClimateEntity):
     def supported_features(self) -> int:
         """Return the list of supported features."""
         return (
-            ClimateEntityFeature.TARGET_TEMPERATURE |
-            ClimateEntityFeature.FAN_MODE |
-            ClimateEntityFeature.PRESET_MODE |
-            ClimateEntityFeature.TURN_OFF |
-            ClimateEntityFeature.TURN_ON
+            ClimateEntityFeature.TARGET_TEMPERATURE
+            | ClimateEntityFeature.FAN_MODE
+            | ClimateEntityFeature.PRESET_MODE
+            | ClimateEntityFeature.TURN_OFF
+            | ClimateEntityFeature.TURN_ON
         )
+
+
+class SistenaSensor(SensorEntity):
+    """Base sensor class for Sistena Onix sensors."""
+
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        regulator: Regulator,
+        device_class: SensorDeviceClass,
+        state_class: SensorStateClass,
+        unit: str,
+    ) -> None:
+        """Initialize the sensor."""
+        self._regulator = regulator
+        self._attr_device_class = device_class
+        self._attr_state_class = state_class
+        self._attr_native_unit_of_measurement = unit
+
+    @property
+    def unique_id(self) -> str:
+        """Return the unique ID of the sensor."""
+        return f"{self._regulator.unique_id}_{self.name.lower()}"
+
+    @property
+    def name(self) -> str:
+        """Return the name of the sensor."""
+        return type(self).__name__.removesuffix("Sensor")
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Return the device info."""
+        info = self._regulator.device_info.copy()
+        info["name"] = self.name
+        info["identifiers"] = {(DOMAIN, f"{self._regulator.unique_id}.{self.name}")}
+        return info
+
+
+class TemperatureSensor(SistenaSensor):
+    """Temperature sensor for Sistena Onix devices."""
+
+    def __init__(self, regulator: Regulator) -> None:
+        """Initialize the temperature sensor."""
+        super().__init__(
+            regulator,
+            SensorDeviceClass.TEMPERATURE,
+            SensorStateClass.MEASUREMENT,
+            UnitOfTemperature.CELSIUS,
+        )
+
+    @property
+    def native_value(self) -> float:
+        return self._regulator.current_temperature
+
+
+class HumiditySensor(SistenaSensor):
+    """Humidity sensor for Sistena Onix devices."""
+
+    def __init__(self, regulator: Regulator) -> None:
+        """Initialize the humidity sensor."""
+        super().__init__(
+            regulator,
+            SensorDeviceClass.HUMIDITY,
+            SensorStateClass.MEASUREMENT,
+            "%",
+        )
+
+    @property
+    def native_value(self) -> float:
+        return self._regulator.current_humidity
 
 
 async def async_setup_entry(
@@ -550,7 +634,10 @@ async def async_setup_entry(
             if device_data is not None:
                 raw_regulator = RawRegulator.from_json(device_data)
                 regulator = Regulator(raw_regulator, api, device_entry.get("givenName"))
-                entities.append(regulator)
+                # Add sensor entities for convenience
+                entities.extend(
+                    [regulator, TemperatureSensor(regulator), HumiditySensor(regulator)]
+                )
         except Exception as e:
             _LOGGER.exception(
                 "Failed to create Regulator %s",
