@@ -1,4 +1,4 @@
-name: Validate HACS
+name: Code checks
 
 on:
   push:
@@ -21,3 +21,24 @@ jobs:
 
       - name: Hassfest
         uses: "home-assistant/actions/hassfest@master"
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+          cache-dependency-glob: "**/pyproject.toml"
+          python-version: "3.13"
+
+      - name: Install project
+        run: uv sync --extra dev
+
+      - name: Run tests
+        run: |
+          # Suppress the deprecation warning from acme library
+          uv run pytest -W ignore::DeprecationWarning
