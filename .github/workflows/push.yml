@@ -33,6 +33,7 @@ jobs:
         with:
           enable-cache: false
           cache-dependency-glob: "**/pyproject.toml"
+          python-version: "3.13"
 
       - name: Install project
         run: uv sync --extra dev
