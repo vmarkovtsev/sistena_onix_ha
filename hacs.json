@@ -1,15 +1,5 @@
 {
   "name": "Sistena Onix",
   "homeassistant": "2025.11.0",
-  "country": ["ES"],
-  "documentation": "https://github.com/vmarkovtsev/sistena_onix_ha",
-  "issue_tracker": "https://github.com/vmarkovtsev/sistena_onix_ha/issues",
-  "repository_topics": [
-    "home-assistant",
-    "home-assistant-integration",
-    "climate",
-    "sensor",
-    "sistena",
-    "onix"
-  ]
+  "country": ["ES"]
 }
