@@ -16,17 +16,15 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.13.2"
 dynamic = ["version"]
 dependencies = [
     "homeassistant>=2025.11.0",
-    "acme>=2.1.0",  # Fix deprecation warning in pyOpenSSL
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
-    "pytest-cov>=4.0",
 ]
 
 [project.urls]
