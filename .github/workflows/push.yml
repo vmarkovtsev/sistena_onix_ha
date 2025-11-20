@@ -38,4 +38,6 @@ jobs:
         run: uv sync --extra dev
 
       - name: Run tests
-        run: uv run pytest
+        run: |
+          # Suppress the deprecation warning from acme library
+          uv run pytest -W ignore::DeprecationWarning
