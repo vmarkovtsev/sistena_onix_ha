@@ -13,11 +13,10 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dynamic = ["version"]
 dependencies = [
     "homeassistant>=2025.11.0",
@@ -37,7 +36,7 @@ Issues = "https://github.com/vmarkovtsev/sistena_onix/issues"
 
 [tool.black]
 line-length = 100
-target-version = ['py312']
+target-version = ['py313']
 
 [tool.isort]
 profile = "black"
@@ -46,6 +45,6 @@ profile = "black"
 testpaths = ["tests"]
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.13"
 warn_return_any = true
 warn_unused_configs = true
