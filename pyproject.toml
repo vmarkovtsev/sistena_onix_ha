@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=45", "wheel"]
 
 [project]
 name = "sistena_onix"
@@ -13,11 +13,9 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 requires-python = ">=3.9"
 dynamic = ["version"]
@@ -27,11 +25,9 @@ Homepage = "https://github.com/vmarkovtsev/sistena_onix"
 Repository = "https://github.com/vmarkovtsev/sistena_onix"
 Issues = "https://github.com/vmarkovtsev/sistena_onix/issues"
 
-[tool.setuptools_scm]
-
 [tool.black]
 line-length = 100
-target-version = ['py39']
+target-version = ['py312']
 
 [tool.isort]
 profile = "black"
@@ -40,6 +36,6 @@ profile = "black"
 testpaths = ["tests"]
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true

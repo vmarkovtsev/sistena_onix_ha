@@ -21,3 +21,21 @@ jobs:
 
       - name: Hassfest
         uses: "home-assistant/actions/hassfest@master"
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+          cache-dependency-glob: "**/pyproject.toml"
+
+      - name: Install project
+        run: uv sync
+
+      - name: Run tests
+        run: uv run pytest
