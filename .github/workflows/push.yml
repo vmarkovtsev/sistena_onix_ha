@@ -1,4 +1,4 @@
-name: Validate HACS
+name: Code checks
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
         uses: "home-assistant/actions/hassfest@master"
 
   test:
-    name: Run tests
+    name: Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,7 +35,7 @@ jobs:
           cache-dependency-glob: "**/pyproject.toml"
 
       - name: Install project
-        run: uv sync
+        run: uv sync --extra dev
 
       - name: Run tests
         run: uv run pytest
