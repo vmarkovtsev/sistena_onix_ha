@@ -1,14 +1,12 @@
 {
   "domain": "sistena",
   "name": "Sistena Onix",
+  "codeowners": ["@vmarkovtsev"],
   "config_flow": true,
+  "dependencies": [],
   "documentation": "https://github.com/vmarkovtsev/sistena_onix_ha",
+  "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/vmarkovtsev/sistena_onix_ha/issues",
   "requirements": ["aiohttp"],
-  "dependencies": [],
-  "codeowners": [
-    "@vmarkovtsev"
-  ],
-  "iot_class": "cloud_polling",
   "version": "1.0.0"
 }
