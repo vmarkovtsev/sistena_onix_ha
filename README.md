@@ -2,7 +2,6 @@
 
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE)
-[![HACS][hacs-shield]][hacs]
 [![Made with Poolside][poolside-shield]][poolside]
 
 ## Overview
@@ -12,6 +11,8 @@ This integration allows you to connect your Sistena Onix devices to Home Assista
 ## Installation
 
 ### HACS Installation (Recommended)
+
+<a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=vmarkovtsev&repository=sistena_onix_ha&category=integration" target="_blank"><img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Open your Home Assistant instance and open a repository inside the Home Assistant Community Store." /></a>
 
 1. Ensure that [HACS](https://hacs.xyz/) is installed on your Home Assistant instance.
 2. Open HACS in your Home Assistant frontend.
@@ -51,10 +52,8 @@ The integration will guide you through a configuration flow where you need to pr
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-[releases-shield]: https://img.shields.io/github/release/vmarkovtsev/sistena_onix.svg
-[releases]: https://github.com/vmarkovtsev/sistena_onix/releases
-[license-shield]: https://img.shields.io/github/license/vmarkovtsev/sistena_onix.svg
-[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg
-[hacs]: https://github.com/hacs/integration
+[releases-shield]: https://img.shields.io/github/release/vmarkovtsev/sistena_onix_ha.svg
+[releases]: https://github.com/vmarkovtsev/sistena_onix_ha/releases
+[license-shield]: https://img.shields.io/github/license/vmarkovtsev/sistena_onix_ha.svg
 [poolside-shield]: https://img.shields.io/badge/Made%20with-Poolside-blue
 [poolside]: https://poolside.ai
