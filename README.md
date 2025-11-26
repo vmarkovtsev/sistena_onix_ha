@@ -44,7 +44,7 @@ The integration will guide you through a configuration flow where you need to pr
 - Climate control widget
 - Temperature and humidity sensors
 
-![Device in Home Assistant](control.png)
+<img src="control.png" width="400"/>
 
 ## Supported Devices
 
