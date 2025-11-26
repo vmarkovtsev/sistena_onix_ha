@@ -44,6 +44,8 @@ The integration will guide you through a configuration flow where you need to pr
 - Climate control widget
 - Temperature and humidity sensors
 
+![Device in Home Assistant](control.png)
+
 ## Supported Devices
 
 * [Giacomini K492AY423](https://es.giacomini.com/producto/K492A) flashed with "GC150_R02" ESP32 firmware from Sistena S.L. (Madrid, Spain).
